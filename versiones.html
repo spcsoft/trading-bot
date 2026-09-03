@@ -88,6 +88,9 @@
 
   .callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--yellow);border-radius:10px;padding:18px 20px;margin-top:8px;color:var(--muted);font-size:14.5px}
   .callout b{color:var(--text)}
+  .pasos{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:11px;color:var(--muted);font-size:14.5px;line-height:1.55}
+  .pasos b{color:var(--text)}
+  .pasos a{color:var(--yellow)}
 
   footer{padding:44px 0;border-top:1px solid var(--line-soft);margin-top:20px}
   .foot-copy{font-family:var(--mono);font-size:12px;color:var(--dim);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -152,6 +155,41 @@
   </div>
 </section>
 
+<a id="celular"></a>
+<section class="blk" style="padding-top:8px">
+  <div class="wrap">
+    <div class="sec-head" style="max-width:680px">
+      <span class="eyebrow">Extra</span>
+      <h2>📱 Usá el bot desde tu celular</h2>
+      <p>El bot corre 24/7 en tu PC; desde el teléfono abrís el mismo panel para mirarlo y controlarlo. Dos formas, ambas protegidas por tu PIN.</p>
+    </div>
+
+    <div class="callout" style="margin-bottom:22px">
+      En la app, entrá a la pestaña <b>📱 Celular</b>: ahí activás el acceso y te muestra la dirección y un <b>código QR</b> para escanear con el teléfono. Estos son los pasos.
+    </div>
+
+    <h3 style="margin:0 0 10px">En casa · misma Wi-Fi</h3>
+    <ol class="pasos">
+      <li>En la app (PC), abrí la pestaña <b>Celular</b> y activá <b>“Permitir el acceso desde el celular”</b>. Cerrá y volvé a abrir la app.</li>
+      <li>Con el <b>celular en la misma red Wi-Fi</b> que la PC, escaneá el <b>QR</b> que aparece (o escribí la dirección <span class="mono">http://…</span> en el navegador del teléfono).</li>
+      <li>Ingresá tu <b>PIN</b> y listo: ya tenés el panel en el celular.</li>
+    </ol>
+
+    <h3 style="margin:22px 0 10px">Desde cualquier lado · Tailscale (gratis)</h3>
+    <p class="muted" style="margin:0 0 12px">Para entrar con datos móviles, lejos de casa, usamos <b>Tailscale</b>: una red privada y cifrada entre tu PC y tu celular. No abre nada a internet: solo tus dispositivos se ven entre sí.</p>
+    <ol class="pasos">
+      <li><b>En la PC:</b> descargá Tailscale de <a href="https://tailscale.com/download" target="_blank" rel="noopener">tailscale.com/download</a>, instalalo e iniciá sesión (podés crear la cuenta gratis con Google).</li>
+      <li><b>En el celular:</b> instalá <b>Tailscale</b> desde Play Store o App Store e iniciá sesión con la <b>misma cuenta</b>.</li>
+      <li>En la app (PC), pestaña <b>Celular</b> → sección <b>Tailscale</b> → tocá <b>Actualizar</b>: aparece la dirección y el QR para el teléfono.</li>
+      <li>Escaneá el QR desde el celular, ingresá tu <b>PIN</b>, y ya podés controlar el bot desde cualquier lado.</li>
+    </ol>
+
+    <div class="callout" style="margin-top:22px">
+      <b>💡 Tip:</b> una vez abierto el panel en el celular, en el menú del navegador tocá <b>“Agregar a pantalla de inicio”</b>. Te queda con ícono, como una app.
+    </div>
+  </div>
+</section>
+
 <section class="blk" style="padding-top:20px">
   <div class="wrap">
     <div class="sec-head">
@@ -164,7 +202,7 @@
         <div class="rel-h">
           <h3>Primera versión pública</h3>
           <span class="v">v1.0.0</span>
-          <time>Agosto 2026</time>
+          <time>Septiembre 2026</time>
           <span class="chip">Actual</span>
         </div>
         <div class="rel-body">
@@ -172,6 +210,7 @@
             <li><strong>Panel completo</strong> con modo prueba y modo real.</li>
             <li><strong>Varias estrategias</strong> de RSI listas para usar, con vista previa de cada una.</li>
             <li><strong>Historial de operaciones</strong> con precio, comisión y motivo de cada compra/venta.</li>
+            <li><strong>Acceso desde el celular:</strong> mirá y controlá el bot desde el teléfono, en la misma Wi-Fi o desde cualquier lado con <strong>Tailscale</strong>. <a href="#celular">Ver cómo ↑</a></li>
             <li><strong>Guía integrada</strong> para crear tu API Key de Binance de forma segura.</li>
             <li><strong>Prueba gratis</strong> de 15 días y activación por Binance Pay.</li>
           </ul>

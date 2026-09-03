@@ -32,6 +32,19 @@ Si te sirve, activás una licencia para seguir usándolo.
 
 ---
 
+## 📱 Desde el celular
+
+El bot corre en tu PC 24/7; desde el teléfono abrís el **mismo panel** para verlo y controlarlo. En la app, pestaña **📱 Celular**, activás el acceso y escaneás un **código QR**. Dos formas:
+
+- **En casa (misma Wi-Fi):** el celular y la PC en la misma red → escaneás el QR y entrás.
+- **Desde cualquier lado:** con **Tailscale** (VPN privada gratis) instalado en la PC y el celular, entrás con datos móviles desde donde estés. No abre nada a internet: solo tus dispositivos se ven entre sí.
+
+Siempre protegido por tu PIN. Podés instalarlo como app en el teléfono con “Agregar a pantalla de inicio”.
+
+👉 Guía paso a paso: https://spcsoft.github.io/trading-bot/versiones.html#celular
+
+---
+
 ## 🔒 Seguridad
 
 - Tus **claves de Binance se guardan cifradas en tu propia computadora**. No pasan por ningún servidor nuestro.
