@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Descargar Trading Bot RSI</title>
+<meta name="description" content="Descargá la última versión de Trading Bot RSI y mirá el historial de cambios." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" />
+<style>
+  :root{
+    --bg:#0B0E11; --bg-2:#0E1216; --panel:#161A1E; --panel-2:#1E2329;
+    --line:#2B3139; --line-soft:#232830;
+    --text:#EAECEF; --muted:#848E9C; --dim:#5E6673;
+    --yellow:#F0B90B; --yellow-2:#F8D33A; --yellow-soft:rgba(240,185,11,.12);
+    --green:#0ECB81; --green-soft:rgba(14,203,129,.12); --red:#F6465B;
+    --radius:14px; --maxw:1000px;
+    --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --display:"Sora",var(--sans);
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:var(--display);margin:0;line-height:1.12;text-wrap:balance;letter-spacing:-.01em}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--yellow)}
+  .muted{color:var(--muted)}
+  .btn{display:inline-flex;align-items:center;gap:9px;justify-content:center;font-family:var(--display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s,color .12s}
+  .btn-primary{background:linear-gradient(180deg,var(--yellow-2),var(--yellow));color:#12100A;box-shadow:0 8px 26px -10px rgba(240,185,11,.7)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 34px -10px rgba(240,185,11,.85)}
+  .btn-ghost{background:var(--panel-2);color:var(--text);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--yellow);color:var(--yellow)}
+
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(11,14,17,.78);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:800;font-size:17px}
+  .brand .logo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(145deg,var(--yellow),#B98908);color:#12100A;font-weight:800;font-size:17px;box-shadow:0 4px 16px -6px rgba(240,185,11,.6)}
+  .brand small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--muted);font-weight:500;margin-top:1px}
+  .nav-links{display:flex;align-items:center;gap:28px;font-size:14px;color:var(--muted)}
+  .nav-links a:hover{color:var(--text)}
+  @media(max-width:680px){.nav-links{display:none}}
+
+  .head{padding:70px 0 40px;text-align:center;border-bottom:1px solid var(--line-soft);position:relative;overflow:hidden}
+  .head::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 320px at 50% -10%,rgba(240,185,11,.13),transparent 65%)}
+  .head-in{position:relative;z-index:2}
+  .head h1{font-size:clamp(32px,5vw,52px);font-weight:800}
+  .head p{color:var(--muted);font-size:18px;margin:16px auto 0;max-width:520px}
+
+  /* tarjeta descarga */
+  .dl-card{max-width:640px;margin:-30px auto 0;position:relative;z-index:5;
+    background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid rgba(240,185,11,.4);
+    border-radius:18px;padding:34px;box-shadow:0 30px 70px -34px rgba(0,0,0,.8),0 0 0 1px rgba(240,185,11,.14)}
+  .dl-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .dl-ver{display:flex;align-items:center;gap:14px}
+  .dl-ver .badge{font-family:var(--mono);font-weight:600;font-size:13px;color:var(--yellow);background:var(--yellow-soft);border:1px solid rgba(240,185,11,.3);padding:5px 12px;border-radius:8px}
+  .dl-ver h2{font-size:22px;font-weight:700}
+  .dl-ver span{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .dl-btn-row{display:flex;gap:14px;flex-wrap:wrap}
+  .dl-meta{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px;padding-top:20px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .dl-meta b{color:var(--text);font-weight:600}
+  .soon{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:16px;text-align:center}
+
+  section.blk{padding:64px 0}
+  .sec-head{max-width:560px;margin-bottom:34px}
+  .sec-head h2{font-size:clamp(24px,3.4vw,32px);font-weight:700;margin-top:12px}
+
+  /* timeline versiones */
+  .rel{position:relative;padding-left:30px}
+  .rel::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--line)}
+  .rel-item{position:relative;padding:0 0 30px}
+  .rel-item::before{content:"";position:absolute;left:-27px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--line)}
+  .rel-item.now::before{background:var(--yellow);border-color:var(--yellow);box-shadow:0 0 0 5px var(--yellow-soft)}
+  .rel-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .rel-h h3{font-size:19px;font-weight:700}
+  .rel-h .v{font-family:var(--mono);color:var(--yellow);font-weight:600}
+  .rel-h time{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .rel-h .chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:3px 9px;border-radius:6px;background:var(--green-soft);color:var(--green)}
+  .rel-body{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .rel-body ul{margin:0;padding-left:20px;color:var(--muted);font-size:14.5px;display:flex;flex-direction:column;gap:7px}
+  .rel-body ul li strong{color:var(--text);font-weight:600}
+  .rel-dl{margin-top:14px}
+  .rel-dl a{font-family:var(--mono);font-size:13px;color:var(--yellow)}
+  .rel-dl a:hover{text-decoration:underline}
+
+  .callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--yellow);border-radius:10px;padding:18px 20px;margin-top:8px;color:var(--muted);font-size:14.5px}
+  .callout b{color:var(--text)}
+
+  footer{padding:44px 0;border-top:1px solid var(--line-soft);margin-top:20px}
+  .foot-copy{font-family:var(--mono);font-size:12px;color:var(--dim);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html">
+      <span class="logo">₿</span><span>Trading Bot RSI<small>SPC SOFT</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html#como">Cómo funciona</a>
+      <a href="index.html#instalar">Instalación</a>
+      <a href="index.html#planes">Planes</a>
+      <a href="versiones.html">Versiones</a>
+    </nav>
+    <a class="btn btn-ghost" href="index.html">← Volver</a>
+  </div>
+</header>
+
+<section class="head">
+  <div class="wrap head-in">
+    <span class="eyebrow">Descargas</span>
+    <h1 style="margin-top:14px">Última versión</h1>
+    <p>Descargá el programa y empezá tu prueba de 15 días. Más abajo, todo el historial de cambios.</p>
+  </div>
+</section>
+
+<a id="descargar"></a>
+<div class="wrap">
+  <div class="dl-card">
+    <div class="dl-top">
+      <div class="dl-ver">
+        <span class="badge">v1.0.0</span>
+        <div>
+          <h2>Trading Bot RSI</h2>
+          <span>para Windows 10/11 · 64 bits</span>
+        </div>
+      </div>
+      <div class="dl-btn-row">
+        <a class="btn btn-primary" href="https://github.com/spcsoft/trading-bot/releases/download/v1.0.0/trading_bot_rsi.exe" data-download>⬇ Descargar .exe</a>
+      </div>
+    </div>
+    <div class="dl-meta">
+      <span>📦 <b>~55 MB</b> · un solo archivo</span>
+      <span>🖥️ <b>Windows</b> 64 bits</span>
+      <span>🎁 <b>15 días</b> gratis</span>
+      <span>🔒 Claves cifradas en tu PC</span>
+    </div>
+    <p class="soon" id="dl-soon">🔒 Descarga segura desde GitHub. ¿Dudas? Escribinos a <b style="color:var(--muted)">spsoft.adm@gmail.com</b></p>
+  </div>
+</div>
+
+<section class="blk">
+  <div class="wrap">
+    <div class="callout">
+      <b>Primera vez:</b> al abrir el <span class="mono">.exe</span>, Windows puede mostrar un aviso de "editor desconocido". Es normal en programas nuevos: tocá <b>Más información → Ejecutar de todos modos</b>. Después creás tu PIN y seguís la guía para conectar Binance.
+    </div>
+  </div>
+</section>
+
+<section class="blk" style="padding-top:20px">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Changelog</span>
+      <h2>Historial de versiones</h2>
+    </div>
+    <div class="rel">
+
+      <div class="rel-item now">
+        <div class="rel-h">
+          <h3>Primera versión pública</h3>
+          <span class="v">v1.0.0</span>
+          <time>Agosto 2026</time>
+          <span class="chip">Actual</span>
+        </div>
+        <div class="rel-body">
+          <ul>
+            <li><strong>Panel completo</strong> con modo prueba y modo real.</li>
+            <li><strong>Varias estrategias</strong> de RSI listas para usar, con vista previa de cada una.</li>
+            <li><strong>Historial de operaciones</strong> con precio, comisión y motivo de cada compra/venta.</li>
+            <li><strong>Guía integrada</strong> para crear tu API Key de Binance de forma segura.</li>
+            <li><strong>Prueba gratis</strong> de 15 días y activación por Binance Pay.</li>
+          </ul>
+          <div class="rel-dl">
+            <a href="https://github.com/spcsoft/trading-bot/releases/download/v1.0.0/trading_bot_rsi.exe" data-download>⬇ Descargar v1.0.0 (.exe)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="rel-item">
+        <div class="rel-h">
+          <h3>Próximamente</h3>
+          <span class="v">v1.1</span>
+          <time>En camino</time>
+        </div>
+        <div class="rel-body">
+          <ul>
+            <li>Más estrategias y mejoras de rendimiento.</li>
+            <li>Detección de tendencia para elegir mejor cuándo entrar y salir.</li>
+            <li>Novedades según lo que nos pidan los usuarios.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-copy">
+    <span>© 2026 SPC Soft · Trading Bot RSI</span>
+    <span>El trading de criptomonedas conlleva riesgo. Operá con responsabilidad.</span>
+  </div>
+</footer>
+
+<script>
+/* Aviso amable si el enlace de descarga todavía es un placeholder (#). */
+document.querySelectorAll('a[data-download]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var href=a.getAttribute('href');
+    if(!href||href==='#'){
+      e.preventDefault();
+      var n=document.getElementById('dl-soon');
+      if(n){ n.style.color='var(--yellow)'; n.scrollIntoView({block:'center'}); }
+    }
+  });
+});
+</script>
+</body>
+</html>

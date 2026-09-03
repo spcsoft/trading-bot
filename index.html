@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trading Bot RSI</title>
+<meta name="description" content="Bot de trading para Binance que opera solo, 24/7, con estrategias de RSI. Sin código. Probalo gratis 15 días." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" />
+<style>
+  :root{
+    --bg:#0B0E11; --bg-2:#0E1216; --panel:#161A1E; --panel-2:#1E2329;
+    --line:#2B3139; --line-soft:#232830;
+    --text:#EAECEF; --muted:#848E9C; --dim:#5E6673;
+    --yellow:#F0B90B; --yellow-2:#F8D33A; --yellow-soft:rgba(240,185,11,.12);
+    --green:#0ECB81; --green-soft:rgba(14,203,129,.12);
+    --red:#F6465B;
+    --radius:14px; --maxw:1120px;
+    --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --display:"Sora",var(--sans);
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:var(--sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:var(--display);margin:0;line-height:1.1;text-wrap:balance;letter-spacing:-.01em}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--yellow)}
+  .muted{color:var(--muted)}
+
+  /* ── Botones ── */
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;justify-content:center;
+    font-family:var(--display);font-weight:700;font-size:15px;
+    padding:14px 26px;border-radius:10px;border:1px solid transparent;cursor:pointer;
+    transition:transform .12s ease,box-shadow .12s ease,background .12s ease,border-color .12s;
+  }
+  .btn-primary{background:linear-gradient(180deg,var(--yellow-2),var(--yellow));color:#12100A;
+    box-shadow:0 8px 26px -10px rgba(240,185,11,.7)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 34px -10px rgba(240,185,11,.85)}
+  .btn-ghost{background:var(--panel-2);color:var(--text);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--yellow);color:var(--yellow)}
+
+  /* ── Nav ── */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(11,14,17,.78);
+    backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:800;font-size:17px}
+  .brand .logo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(145deg,var(--yellow),#B98908);color:#12100A;font-weight:800;font-size:17px;
+    box-shadow:0 4px 16px -6px rgba(240,185,11,.6)}
+  .brand small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--muted);font-weight:500;margin-top:1px}
+  .nav-links{display:flex;align-items:center;gap:28px;font-size:14px;color:var(--muted)}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{display:flex;align-items:center;gap:14px}
+  @media(max-width:760px){.nav-links{display:none}}
+
+  /* ── Hero ── */
+  .hero{position:relative;padding:96px 0 84px;overflow:hidden;border-bottom:1px solid var(--line-soft)}
+  #spark{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(1100px 480px at 72% -8%,rgba(240,185,11,.12),transparent 60%),
+               linear-gradient(180deg,transparent 55%,var(--bg) 96%)}
+  .hero-in{position:relative;z-index:2;max-width:720px}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;
+    background:var(--green-soft);border:1px solid rgba(14,203,129,.32);color:var(--green);
+    font-size:13px;font-weight:600;margin-bottom:26px}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(14,203,129,.18)}
+  .hero h1{font-size:clamp(38px,6.2vw,68px);font-weight:800}
+  .hero h1 .hl{color:var(--yellow)}
+  .hero p.lead{font-size:clamp(17px,2.2vw,21px);color:var(--muted);margin:22px 0 34px;max-width:600px}
+  .hero-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .hero-note{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);margin-top:20px;font-family:var(--mono)}
+  .hero-note b{color:var(--muted);font-weight:600}
+
+  /* ── Secciones ── */
+  section.blk{padding:88px 0;border-bottom:1px solid var(--line-soft)}
+  .sec-head{max-width:600px;margin-bottom:52px}
+  .sec-head h2{font-size:clamp(28px,4vw,40px);font-weight:700;margin-top:14px}
+  .sec-head p{color:var(--muted);margin:16px 0 0;font-size:17px}
+
+  /* ── Cómo funciona (pasos) ── */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .step{background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--line);
+    border-radius:var(--radius);padding:28px 24px;position:relative;overflow:hidden}
+  .step .n{font-family:var(--mono);font-size:13px;color:var(--yellow);font-weight:600;letter-spacing:.1em}
+  .step h3{font-size:19px;font-weight:600;margin:14px 0 10px}
+  .step p{color:var(--muted);font-size:15px;margin:0}
+  .step .ico{font-size:26px;line-height:1}
+  .step::before{content:"";position:absolute;left:0;top:0;height:100%;width:3px;background:var(--yellow);opacity:.0;transition:opacity .2s}
+  .step:hover::before{opacity:.9}
+
+  /* ── Features en 2 col ── */
+  .feat{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .feat ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:22px}
+  .feat li{display:flex;gap:16px;align-items:flex-start}
+  .feat li .chk{flex:none;width:30px;height:30px;border-radius:8px;background:var(--yellow-soft);
+    border:1px solid rgba(240,185,11,.3);display:grid;place-items:center;color:var(--yellow);font-weight:700}
+  .feat li h3{font-size:17px;font-weight:600;margin:0 0 3px}
+  .feat li p{margin:0;color:var(--muted);font-size:15px}
+
+  /* mock panel */
+  .mock{background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--line);
+    border-radius:var(--radius);padding:0;overflow:hidden;box-shadow:0 30px 70px -30px rgba(0,0,0,.7)}
+  .mock-bar{display:flex;align-items:center;gap:7px;padding:12px 15px;border-bottom:1px solid var(--line-soft);background:var(--panel-2)}
+  .mock-bar i{width:11px;height:11px;border-radius:50%;background:var(--line);display:block}
+  .mock-bar i:nth-child(1){background:#F6465B}.mock-bar i:nth-child(2){background:var(--yellow)}.mock-bar i:nth-child(3){background:var(--green)}
+  .mock-bar span{margin-left:8px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .mock-body{padding:22px}
+  .mrow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+  .mrow:last-child{border-bottom:0}
+  .mrow .k{color:var(--muted);font-size:13px}
+  .mrow .v{font-family:var(--mono);font-weight:600}
+  .tag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:6px;font-weight:600}
+  .tag.buy{background:var(--green-soft);color:var(--green)}
+  .tag.sell{background:rgba(246,70,93,.12);color:var(--red)}
+  .bignum{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.02em}
+
+  /* ── Banda confianza ── */
+  .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .trust .t{display:flex;gap:14px;align-items:flex-start;padding:22px;border:1px solid var(--line);
+    border-radius:12px;background:var(--bg-2)}
+  .trust .t .ic{font-size:22px;flex:none}
+  .trust .t h3{font-size:16px;font-weight:600;margin:0 0 4px}
+  .trust .t p{margin:0;font-size:14px;color:var(--muted)}
+
+  /* ── Planes ── */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+  .plan{background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--line);
+    border-radius:var(--radius);padding:30px 26px;display:flex;flex-direction:column;position:relative}
+  .plan.best{border-color:rgba(240,185,11,.55);box-shadow:0 0 0 1px rgba(240,185,11,.25),0 26px 60px -34px rgba(240,185,11,.5)}
+  .plan.best::before{content:"Más elegido";position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(180deg,var(--yellow-2),var(--yellow));color:#12100A;font-family:var(--display);
+    font-weight:700;font-size:11px;letter-spacing:.06em;padding:5px 14px;border-radius:999px}
+  .plan .pname{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .plan .price{font-family:var(--display);font-weight:800;font-size:44px;margin:12px 0 2px;letter-spacing:-.02em}
+  .plan .price small{font-size:16px;color:var(--muted);font-weight:500;font-family:var(--mono)}
+  .plan .days{color:var(--yellow);font-size:14px;font-family:var(--mono);margin-bottom:20px}
+  .plan ul{list-style:none;padding:0;margin:0 0 26px;display:flex;flex-direction:column;gap:11px;font-size:14.5px;color:var(--muted)}
+  .plan ul li::before{content:"✓";color:var(--green);font-weight:700;margin-right:9px}
+  .plan .btn{margin-top:auto;width:100%}
+  .plans-note{text-align:center;color:var(--dim);font-size:13.5px;margin-top:26px;font-family:var(--mono)}
+  .plans-note b{color:var(--muted)}
+
+  /* ── FAQ ── */
+  .faq{display:flex;flex-direction:column;gap:12px;max-width:820px}
+  details.q{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:2px 22px}
+  details.q>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;
+    gap:16px;padding:20px 0;font-family:var(--display);font-weight:600;font-size:17px}
+  details.q>summary::-webkit-details-marker{display:none}
+  details.q .plus{color:var(--yellow);font-size:22px;transition:transform .2s;flex:none}
+  details.q[open] .plus{transform:rotate(45deg)}
+  details.q p{margin:0 0 20px;color:var(--muted);font-size:15px}
+
+  /* ── CTA final ── */
+  .final{position:relative;text-align:center;padding:96px 0;border-bottom:1px solid var(--line-soft);overflow:hidden}
+  .final::before{content:"";position:absolute;inset:0;background:radial-gradient(680px 300px at 50% 0%,rgba(240,185,11,.14),transparent 68%)}
+  .final-in{position:relative;z-index:2;max-width:640px;margin:0 auto}
+  .final h2{font-size:clamp(30px,4.5vw,46px);font-weight:800}
+  .final p{color:var(--muted);font-size:18px;margin:18px 0 32px}
+
+  /* ── Footer ── */
+  footer{padding:52px 0 40px}
+  .foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  .foot .muted{font-size:14px}
+  .foot a{color:var(--muted);font-size:14px}
+  .foot a:hover{color:var(--yellow)}
+  .foot-links{display:flex;gap:26px;flex-wrap:wrap}
+  .foot-copy{margin-top:28px;padding-top:20px;border-top:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:12px;color:var(--dim);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  @media(max-width:860px){
+    .steps,.trust,.plans{grid-template-columns:1fr}
+    .feat{grid-template-columns:1fr;gap:34px}
+    .plan.best{order:-1}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <span class="logo">₿</span>
+      <span>Trading Bot RSI<small>SPC SOFT</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#como">Cómo funciona</a>
+      <a href="#instalar">Instalación</a>
+      <a href="#planes">Planes</a>
+      <a href="#faq">Preguntas</a>
+      <a href="versiones.html">Versiones</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-primary" href="versiones.html#descargar">Descargar</a>
+    </div>
+  </div>
+</header>
+
+<a id="top"></a>
+<section class="hero">
+  <canvas id="spark"></canvas>
+  <div class="wrap hero-in">
+    <span class="pill"><span class="dot"></span>Prueba gratis · 15 días · sin tarjeta</span>
+    <h1>Tu bot de trading en Binance, <span class="hl">operando solo</span> las 24 horas.</h1>
+    <p class="lead">Elegís una estrategia, definís cuánto invertir y el bot compra y vende por vos siguiendo el mercado. Todo desde un panel claro, en tu computadora. Sin escribir una sola línea de código.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="versiones.html#descargar">⬇ Descargar gratis</a>
+      <a class="btn btn-ghost" href="#como">Ver cómo funciona</a>
+    </div>
+    <div class="hero-note"><b>Windows</b> · Un solo archivo · <b>Tus claves nunca salen de tu PC</b></div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="blk" id="como">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">En 3 pasos</span>
+      <h2>Simple de afuera, inteligente por dentro.</h2>
+      <p>No necesitás saber de trading ni de programación. El bot hace el trabajo pesado; vos solo decidís el estilo.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="ico">🎯</div>
+        <div class="n" style="margin-top:14px">PASO 01</div>
+        <h3>Elegí una estrategia</h3>
+        <p>Varias estrategias listas para usar, cada una con su estilo: más conservadora o más agresiva. Cambialas cuando quieras.</p>
+      </div>
+      <div class="step">
+        <div class="ico">⚙️</div>
+        <div class="n" style="margin-top:14px">PASO 02</div>
+        <h3>Definí cuánto operar</h3>
+        <p>Ponés el monto y los límites. El bot respeta tus reglas y nunca opera de más. Empezá con montos chicos para probar.</p>
+      </div>
+      <div class="step">
+        <div class="ico">📈</div>
+        <div class="n" style="margin-top:14px">PASO 03</div>
+        <h3>Dejalo trabajar</h3>
+        <p>Compra en las bajas y vende en las subas siguiendo las señales, 24/7. Vos mirás todo en tiempo real desde el panel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES + MOCK -->
+<section class="blk">
+  <div class="wrap feat">
+    <div>
+      <span class="eyebrow">Un panel para todo</span>
+      <h2 style="font-size:clamp(28px,4vw,40px);font-weight:700;margin:14px 0 30px">Ves cada movimiento, con total claridad.</h2>
+      <ul>
+        <li><span class="chk">✓</span><div><h3>Modo prueba y modo real</h3><p>Practicá con dinero simulado hasta que le tomes la mano. Cuando quieras, pasás a real con una confirmación explícita.</p></div></li>
+        <li><span class="chk">✓</span><div><h3>Historial de cada operación</h3><p>Qué compró, a qué precio, cuánto pagó de comisión y por qué. Nada oculto.</p></div></li>
+        <li><span class="chk">✓</span><div><h3>Funciona en tu computadora</h3><p>No es una web ni una nube: corre en tu PC y tus claves quedan cifradas ahí. Nosotros nunca las vemos.</p></div></li>
+        <li><span class="chk">✓</span><div><h3>Pausas y horarios</h3><p>Configurá cuándo opera y cuándo descansa. El bot se adapta a tu rutina.</p></div></li>
+      </ul>
+    </div>
+    <div class="mock" aria-hidden="true">
+      <div class="mock-bar"><i></i><i></i><i></i><span>Trading Bot RSI · Panel</span></div>
+      <div class="mock-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px">
+          <div><div class="k" style="color:var(--muted);font-size:13px">BTC/USDT</div><div class="bignum">80.412<span style="color:var(--muted);font-size:16px">,50</span></div></div>
+          <div style="text-align:right"><div class="tag buy">▲ +1,84%</div></div>
+        </div>
+        <div class="mrow"><span class="k">Estrategia activa</span><span class="v" style="color:var(--yellow)">Bandas de Bollinger</span></div>
+        <div class="mrow"><span class="k">Última operación</span><span class="tag buy">COMPRA · 0,004 BTC</span></div>
+        <div class="mrow"><span class="k">Precio promedio</span><span class="v">79.805,00</span></div>
+        <div class="mrow"><span class="k">Ganancia acumulada</span><span class="v" style="color:var(--green)">+12,74 USDT</span></div>
+        <div class="mrow"><span class="k">Estado del motor</span><span class="v" style="color:var(--green)">● En marcha</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALACIÓN -->
+<section class="blk" id="instalar">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Instalación amigable</span>
+      <h2>Listo para usar en menos de 2 minutos.</h2>
+      <p>Sin instaladores raros ni permisos de administrador. Un archivo, doble clic, y estás adentro.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="ico">⬇️</div><div class="n" style="margin-top:14px">01</div>
+        <h3>Descargá el programa</h3>
+        <p>Un único archivo <span class="mono" style="color:var(--yellow)">.exe</span>. Guardalo donde quieras, por ejemplo en tu Escritorio.</p>
+      </div>
+      <div class="step">
+        <div class="ico">🔒</div><div class="n" style="margin-top:14px">02</div>
+        <h3>Abrilo y creá tu PIN</h3>
+        <p>La primera vez elegís un PIN de acceso al panel. Se abre solo en tu navegador, en tu propia PC.</p>
+      </div>
+      <div class="step">
+        <div class="ico">🔑</div><div class="n" style="margin-top:14px">03</div>
+        <h3>Conectá tu Binance</h3>
+        <p>Pegás tu API Key (te guiamos paso a paso, sin permiso de retiro) y empezás en modo prueba. ¡Listo!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONFIANZA -->
+<section class="blk">
+  <div class="wrap">
+    <div class="sec-head" style="max-width:640px">
+      <span class="eyebrow">Tu plata, tus reglas</span>
+      <h2>Pensado para que operes tranquilo.</h2>
+    </div>
+    <div class="trust">
+      <div class="t"><div class="ic">🛡️</div><div><h3>Sin permiso de retiro</h3><p>La conexión con Binance se crea sin poder sacar fondos. El bot solo compra y vende: nunca puede transferir tu dinero.</p></div></div>
+      <div class="t"><div class="ic">🔐</div><div><h3>Claves cifradas en tu PC</h3><p>Tus credenciales se guardan encriptadas en tu computadora y jamás salen de ahí. No hay servidores nuestros de por medio.</p></div></div>
+      <div class="t"><div class="ic">✋</div><div><h3>El modo real se arma a mano</h3><p>Nunca manda una orden real por accidente: hay que activarlo explícitamente escribiendo una confirmación.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANES -->
+<section class="blk" id="planes">
+  <div class="wrap">
+    <div class="sec-head" style="max-width:640px">
+      <span class="eyebrow">Precios claros</span>
+      <h2>Probá gratis. Pagá solo si te sirve.</h2>
+      <p>15 días de prueba sin costo. Después elegís el plan que quieras: se paga fácil por Binance Pay y se activa solo.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <div class="pname">Semanal</div>
+        <div class="price">3<small> USDT</small></div>
+        <div class="days">7 días</div>
+        <ul><li>Todas las estrategias</li><li>Modo prueba y real</li><li>Ideal para arrancar</li></ul>
+        <a class="btn btn-ghost" href="versiones.html#descargar">Empezar</a>
+      </div>
+      <div class="plan best">
+        <div class="pname">Quincenal</div>
+        <div class="price">5<small> USDT</small></div>
+        <div class="days">15 días</div>
+        <ul><li>Todas las estrategias</li><li>Modo prueba y real</li><li>El mejor precio por día</li><li>Soporte por email</li></ul>
+        <a class="btn btn-primary" href="versiones.html#descargar">Elegir este</a>
+      </div>
+      <div class="plan">
+        <div class="pname">Mensual</div>
+        <div class="price">9<small> USDT</small></div>
+        <div class="days">30 días</div>
+        <ul><li>Todas las estrategias</li><li>Modo prueba y real</li><li>Para uso continuo</li><li>Soporte por email</li></ul>
+        <a class="btn btn-ghost" href="versiones.html#descargar">Empezar</a>
+      </div>
+    </div>
+    <p class="plans-note">Pago por <b>Binance Pay</b> · La licencia queda atada a tu equipo · Consultas: <b>spsoft.adm@gmail.com</b></p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="blk" id="faq">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Dudas frecuentes</span><h2>Lo que todos preguntan.</h2></div>
+    <div class="faq">
+      <details class="q" open><summary>¿Necesito saber de trading o programar?<span class="plus">+</span></summary><p>No. Elegís una estrategia ya armada y definís el monto. El bot se encarga del resto. Igual te recomendamos empezar en modo prueba para entenderlo sin arriesgar plata.</p></details>
+      <details class="q"><summary>¿Es seguro darle mi API de Binance?<span class="plus">+</span></summary><p>Sí. La API se crea <b>sin permiso de retiro</b>, así que el bot nunca puede sacar tus fondos, solo comprar y vender. Además tus claves se guardan cifradas en tu propia computadora y no pasan por ningún servidor nuestro.</p></details>
+      <details class="q"><summary>¿En qué exchange funciona?<span class="plus">+</span></summary><p>En <b>Binance Spot</b>. Operás con los pares que tengas disponibles en tu cuenta.</p></details>
+      <details class="q"><summary>¿Puedo probarlo antes de pagar?<span class="plus">+</span></summary><p>Sí, tenés <b>15 días gratis</b> con todas las funciones. No pedimos tarjeta. Si te gusta, activás un plan por Binance Pay.</p></details>
+      <details class="q"><summary>¿El bot garantiza ganancias?<span class="plus">+</span></summary><p>No, y desconfiá de quien lo prometa. El trading tiene riesgo y el resultado depende del mercado y de tu configuración. El bot es una herramienta para automatizar tu estrategia, no una fuente de ganancias asegurada.</p></details>
+      <details class="q"><summary>¿Tengo que dejar la computadora prendida?<span class="plus">+</span></summary><p>Sí, el bot corre en tu PC. Mientras esté abierto opera 24/7; podés configurar pausas y horarios para que descanse cuando vos quieras.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="final">
+  <div class="wrap final-in">
+    <span class="eyebrow">Empezá hoy</span>
+    <h2 style="margin-top:14px">Descargalo y probá 15 días gratis.</h2>
+    <p>Sin tarjeta, sin compromiso. Si no te convence, no pagás nada.</p>
+    <a class="btn btn-primary" href="versiones.html#descargar" style="padding:16px 34px;font-size:16px">⬇ Descargar Trading Bot RSI</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#top" style="margin-bottom:12px">
+          <span class="logo">₿</span><span>Trading Bot RSI<small>SPC SOFT</small></span>
+        </a>
+        <p class="muted" style="max-width:320px;margin:14px 0 0">Automatizá tu trading en Binance con estrategias de RSI, desde tu propia computadora.</p>
+      </div>
+      <div class="foot-links">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span class="mono" style="font-size:11px;letter-spacing:.15em;color:var(--dim);text-transform:uppercase">Producto</span>
+          <a href="#como">Cómo funciona</a><a href="#instalar">Instalación</a><a href="#planes">Planes</a><a href="versiones.html">Versiones</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span class="mono" style="font-size:11px;letter-spacing:.15em;color:var(--dim);text-transform:uppercase">Contacto</span>
+          <a href="mailto:spsoft.adm@gmail.com">spsoft.adm@gmail.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-copy">
+      <span>© 2026 SPC Soft · Trading Bot RSI</span>
+      <span>El trading de criptomonedas conlleva riesgo. Operá con responsabilidad.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Velas ambientales del hero — sutiles, decorativas. */
+(function(){
+  var c=document.getElementById('spark'); if(!c) return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var ctx=c.getContext('2d'), dpr=Math.min(window.devicePixelRatio||1,2), W,H,candles,t=0;
+  var GREEN='rgba(14,203,129,', RED='rgba(246,70,93,';
+  function resize(){ W=c.clientWidth; H=c.clientHeight; c.width=W*dpr; c.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); build(); }
+  function build(){
+    candles=[]; var n=Math.ceil(W/26)+2, price=H*0.55;
+    for(var i=0;i<n;i++){
+      var dir=Math.random()>.48?1:-1, body=8+Math.random()*46, wick=body+6+Math.random()*22;
+      var open=price; price+=dir*(6+Math.random()*26); price=Math.max(H*0.2,Math.min(H*0.82,price));
+      candles.push({open:open,close:price,mid:(open+price)/2,body:body,wick:wick,up:price<=open});
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H); t+=0.15;
+    var cw=18, gap=26;
+    for(var i=0;i<candles.length;i++){
+      var x=i*gap - (t%gap), k=candles[i], a=0.5;
+      var col=(k.up?GREEN:RED)+a+')';
+      ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(x+cw/2, k.mid-k.wick/2); ctx.lineTo(x+cw/2, k.mid+k.wick/2); ctx.stroke();
+      ctx.globalAlpha=0.85; ctx.fillRect(x, k.mid-k.body/2, cw, k.body); ctx.globalAlpha=1;
+    }
+    if(t%gap<0.2){ candles.shift(); var last=candles[candles.length-1]||{close:H*0.5};
+      var dir=Math.random()>.48?1:-1, body=8+Math.random()*46, price=Math.max(H*0.2,Math.min(H*0.82,last.close+dir*(6+Math.random()*26)));
+      candles.push({open:last.close,close:price,mid:(last.close+price)/2,body:body,wick:body+6+Math.random()*22,up:price<=last.close}); }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize); resize(); requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
